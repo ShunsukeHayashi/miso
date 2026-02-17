@@ -10,7 +10,7 @@
 
 ## Demo
 
-[![MISO Demo](https://img.youtube.com/vi/5kHw_YtJPCM/maxresdefault.jpg)](https://youtube.com/shorts/5kHw_YtJPCM)
+[![MISO Demo](https://img.youtube.com/vi/5kHw_YtJPCM/hqdefault.jpg)](https://www.youtube.com/watch?v=5kHw_YtJPCM)
 
 > Real-time multi-agent orchestration in Telegram. No Web UI needed.
 
