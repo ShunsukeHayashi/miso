@@ -1,7 +1,6 @@
 .DS_Store
-*.pyc
-__pycache__/
-.miso-state.json
 *.log
-.env
 node_modules/
+__pycache__/
+*.pyc
+.env
