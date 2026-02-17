@@ -10,7 +10,7 @@
 
 ## Demo
 
-https://github.com/user-attachments/assets/miso-demo.mp4
+https://github.com/ShunsukeHayashi/miso/raw/main/assets/miso-demo.mp4
 
 > Real-time multi-agent orchestration in Telegram. No Web UI needed.
 
