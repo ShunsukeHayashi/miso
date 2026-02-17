@@ -1,328 +1,234 @@
-# MISO — Mission Inline Skill Orchestration
+# MISO — Mission-Interstate Sync Orchestrator
 
-**"Simple ingredients. Rich flavor."** 🍜
+[![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://github.com/shunsukehayashi/openclaw)
+[![Reaction Level](https://img.shields.io/badge/Reactions-Extensive-brightgreen)](https://docs.openclaw.ai/channels/telegram#reaction-levels)
+[![Design System](https://img.shields.io/badge/Design-System-purple)](SKILL.md)
 
-[![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue?style=flat-square)](https://github.com/openclaw)
-[![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-orange?style=flat-square)](https://github.com/openclaw/skills/mission-control)
+**Instant mission state awareness without opening a single chat.**
 
 ---
 
 ## What is MISO?
 
-MISO is the world's first **Telegram-native Agentic UI framework** that brings multi-agent orchestration into your DM — no web dashboards, no external apps, just seamless, inline visibility.
+MISO is an OpenClaw skill that implements a 4-layer UX model for mission-critical work. It leverages Telegram's rich reaction system to give you immediate state visibility at a glance—no need to open conversations to check progress.
 
-At its core, MISO orchestrates the entire mission lifecycle through a single, evolving message. It's not about displaying progress; it's about **living** progress — every phase, every state transition, every decision point flows through one artifact that you can glance at, interact with, and trust.
-
-### Why "MISO"?
-
-Just like the Japanese soup stock that delivers depth from simple ingredients, MISO orchestrates complex multi-agent workflows using only Telegram's native primitives: **reactions, edits, pins, and inline buttons**.
+Unlike traditional project management tools that require dashboards, refreshes, or manual status checks, MISO pushes state changes to the surface using emoji reactions and strategic message patterns. Your agents read `SKILL.md` and follow the patterns automatically—no Python code required.
 
 ---
 
-## 📐 4-Layer UX Model
+## 4-Layer UX Model
 
-MISO's magic lies in its layered approach — each layer adds a dimension of information while keeping the experience intuitive.
+MISO organizes communication into four distinct layers, each optimized for speed and cognitive load:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Layer 0: 📌 PIN                                              │
-│  ─────────────────────────────────────────────────────────  │
-│  Master ticket always pinned — presence at a glance           │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│  Layer 1: 🔥👀🎉❌ REACTIONS                                  │
-│  ─────────────────────────────────────────────────────────  │
-│  🔥 Running → 👀 Awaiting → 🎉 Complete → ❌ Error            │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│  Layer 2: MESSAGE BODY                                        │
-│  ─────────────────────────────────────────────────────────  │
-│  • Progress bar                                               │
-│  • Agent status matrix                                        │
-│  • 🧠 Thought stream (optional)                               │
-│  • WBS-style master ticket with strikethrough completion      │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│  Layer 3: INLINE BUTTONS                                      │
-│  ─────────────────────────────────────────────────────────  │
-│  [✅ Approve] [🔄 Retry] [⏭ Skip] [⏹ Abort]                   │
-└─────────────────────────────────────────────────────────────┘
-```
+| Layer | Element | Purpose | Speed |
+|-------|---------|---------|-------|
+| 0 | 📌 Pin | Presence announcement | Instant (chat open) |
+| 1 | 🔥👀🎉❌ Reaction | State identification | Instant (chat list) |
+| 2 | Message Body | Detailed information | Read when needed |
+| 3 | Inline Buttons | Actions | Execute on interaction |
 
-### The Layers Explained
-
-| Layer | Element | Purpose |
-|-------|---------|---------|
-| **0** | 📌 Pin | Permanent visibility — see status the moment you open the chat |
-| **1** | 🔥👀🎉❌ | Reactive state — scroll-free awareness from any message list |
-| **2** | Rich Body | Detailed context — progress, agents, thoughts, tasks |
-| **3** | Inline Actions | Human-in-the-loop — control flow without leaving Telegram |
+The magic happens at **Layer 1**: You see mission state right in the chat list without opening any conversations.
 
 ---
 
-## ✨ Features
+## Features
 
-### Core Capabilities
-
-- **📌 Hybrid Pinning Strategy**
-  - Master ticket: Always pinned, persistent mission anchor
-  - Individual missions: Temporary pins for active workflows
-  - Auto-cleanup: Pins removed when missions complete
-
-- **🎯 WBS-Driven Master Ticket**
-  - Goal-oriented task breakdown
-  - Strikethrough completion ~~like this~~ for visual clarity
-  - Hierarchical task relationships
-
-- **🔗 Channel Orchestration**
-  - Auto-post mission start to `@MIYABI_CHANNEL` (or any configured channel)
-  - Broadcast completion status on finish
-  - Team-wide visibility without manual updates
-
-- **🛑 Human-in-the-Loop Approval Gates**
-  - Automatic pause before irreversible operations
-  - Required confirmation for destructive actions
-  - Timeout with fallback to safe default
-
-- **🔧 Error Recovery Buttons**
-  - **🔄 Retry** — Restart failed phase with same context
-  - **⏭ Skip** — Continue without completing current task
-  - **📝 Partial** — Mark as complete with warnings
-  - **⏹ Abort** — Clean shutdown with state preservation
-
-### UX Superpowers
-
-- **Single-Message Lifecycle** — All progress tracked in one editable message
-- **Reaction-First Design** — Know state without opening the message
-- **Inline Control Flow** — No commands, no menus — just tap buttons
-- **Optional Thought Display** — Show 🧠 agent reasoning for transparency
+- **Zero-Dashboard Visibility** — See all mission states from your chat list
+- **Reaction-Based State Machine** — Emoji reactions carry semantic meaning
+- **OpenClaw Native** — Drop it in your skills directory, configure once, done
+- **Design System Compliant** — Follows MISO's visual and formatting standards
+- **WBS Master Ticket Pattern** — Track complex work with strike-through updates
+- **Phase Templates** — Consistent, emoji-rich status formats for every phase
+- **Extensive Reaction Mode** — Full emoji reaction support required
+- **No Code Required** — Agents read patterns from SKILL.md and follow them
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### Installation
+### Install MISO
 
 ```bash
-# Clone or add to your OpenClaw skills directory
-cd ~/.openclaw/workspace/skills/
-git clone <mission-control-repo> mission-control
+# Clone the repository
+git clone https://github.com/shunsukehayashi/miso.git ~/.openclaw/skills/miso
+
+# Or install via clawhub (if available)
+clawhub install miso
 ```
 
-### Basic Setup
+### Configure OpenClaw
 
-```yaml
-# openclaw.json configuration snippet
-skills:
-  - name: mission-control
-    path: skills/mission-control
-    enabled: true
-    config:
-      telegram:
-        channel: "@MIYABI_CHANNEL"  # Broadcast channel (optional)
-        pin_master: true             # Always pin master ticket
-        pin_individual: true         # Pin active missions temporarily
-      approvals:
-        timeout_seconds: 300         # 5 minutes to approve
-        default_action: abort        # Fallback if timeout
-      ui:
-        show_thoughts: false          # 🧠 Show agent reasoning
-        progress_style: bar           # bar | text
+Edit `~/.openclaw/openclaw.json` to enable extensive reactions:
+
+```json5
+{
+  channels: {
+    telegram: {
+      reactionLevel: "extensive"
+    }
+  }
+}
 ```
 
-### First Mission
+### Use MISO
 
-```python
-from skills.mission_control import Mission
+1. Start a mission with the MISO pattern
+2. Agents automatically apply reactions (🔥 in-progress, 👀 pending, 🎉 complete, ❌ failed)
+3. Track state from your chat list—no need to open conversations
+4. Use inline buttons for actions (approve, reject, etc.)
 
-mission = Mission(
-    name="Deploy Production",
-    channel="@MIYABI_CHANNEL",
-    wbs=[
-        "Run tests",
-        "Build artifact",
-        "Deploy to staging",
-        "Smoke test",
-        "Promote to production",
-        "Verify"
-    ]
-)
+That's it. No Python imports, no setup code. Just patterns that agents follow.
 
-await mission.start()  # Creates pinned message with 🔥 reaction
+---
+
+## Phase Example
+
+Here's a sample phase message following the MISO design system:
+
+```
+🏗️ Phase: Implementation
+
+— Started 2026-02-17 · Estimated 2026-02-20 —
+Status: 🔥 In Progress (Day 2 of 4)
+
+This phase covers the core feature development:
+  ↳ Backend API endpoints
+  ↳ Frontend components
+  ↳ Integration testing
+
+Next: Validation & Review phase
+🌸 MISO · Auto-generated
+```
+
+Key design elements:
+- Em dash (`—`) separators
+- Unicode bold where needed
+- Indented hierarchy with ↳
+- Sakura (🌸) footer
+- Reaction-friendly structure
+
+---
+
+## Configuration
+
+### openclaw.json
+
+```json5
+{
+  // Enable extensive reactions for full MISO support
+  channels: {
+    telegram: {
+      reactionLevel: "extensive"
+    }
+  },
+
+  // Optional: Configure MISO-specific settings
+  skills: {
+    miso: {
+      enabled: true,
+      reactionEmojis: {
+        inProgress: "🔥",
+        pending: "👀",
+        complete: "🎉",
+        failed: "❌",
+        blocked: "🚫",
+        approved: "✅",
+        rejected: "👎"
+      }
+    }
+  }
+}
+```
+
+### Reaction Semantics
+
+| Emoji | Meaning | When to Use |
+|-------|---------|-------------|
+| 🔥 | In Progress | Active work happening |
+| 👀 | Pending | Waiting on something |
+| 🎉 | Complete | Phase/mission done |
+| ❌ | Failed | Hit a blocker |
+| 🚫 | Blocked | Waiting on external dependency |
+| ✅ | Approved | Green-lit to proceed |
+| 👎 | Rejected | Changes requested |
+
+---
+
+## WBS Master Ticket Example
+
+Track complex work with strike-through updates:
+
+```
+📋 WBS Master: E-Commerce Platform Migration
+
+— Started 2026-02-10 · Target 2026-02-28 —
+Status: 🔥 In Progress (60%)
+
+## Phase 1: Discovery [COMPLETE]
+  ↳ ~~Audit current system~~
+  ↳ ~~Define migration scope~~
+  ↳ ~~Risk assessment~~
+
+## Phase 2: Architecture [COMPLETE]
+  ↳ ~~Design new data model~~
+  ↳ ~~API specification~~
+  ↳ ~~Infrastructure plan~~
+
+## Phase 3: Implementation [IN PROGRESS]
+  ↳ ~~Core backend services~~
+  ↳ ~~User authentication module~~
+  ↳ ~~Payment integration~~
+  ↳ Order management system (active)
+  ↳ Inventory sync
+  ↳ ~~Frontend components~~
+  ↳ ~~Admin dashboard~~
+  ↳ Customer portal (active)
+
+## Phase 4: Testing [PENDING]
+  ↳ Unit tests
+  ↳ Integration tests
+  ↳ Load testing
+  ↳ Security audit
+
+## Phase 5: Launch [PENDING]
+  ↳ ~~Staging deployment~~
+  ↳ Production cutover
+  ↳ Monitoring setup
+  ↳ Rollback plan verification
+
+Next: Testing phase kickoff
+🌸 MISO · Master Ticket
 ```
 
 ---
 
-## 📊 Phase Templates
+## Design Rules
 
-MISO supports **6 mission phases** with pre-configured templates:
+When following MISO patterns, remember:
 
-| Phase | Reaction | Description | Typical Actions |
-|-------|----------|-------------|-----------------|
-| **INIT** | 🔥 | Mission initialized, agents preparing | Load context, validate inputs |
-| **RUNNING** | 🔥 | Active execution in progress | Run agents, update progress |
-| **PARTIAL** | 👀 | Some tasks complete, ongoing | Continue remaining, report partial |
-| **AWAITING APPROVAL** | 👀 | Waiting for human confirmation | Wait for button tap or timeout |
-| **COMPLETE** | 🎉 | All tasks finished successfully | Cleanup, report results |
-| **ERROR** | ❌ | Failure occurred | Show error, offer recovery options |
-
-### Sample Message Evolution
-
-#### 1. INIT Phase
-```
-🚀 Deploy Production
-
-Tasks:
-□ Run tests
-□ Build artifact
-□ Deploy to staging
-□ Smoke test
-□ Promote to production
-□ Verify
-
-[🔄 Starting agents...]
-```
-
-#### 2. RUNNING Phase
-```
-🚀 Deploy Production
-
-Progress: ████████░░░░░░░░░░ 40%
-
-Tasks:
-✅ Run tests
-✅ Build artifact
-□ Deploy to staging [Running: deploy-agent]
-□ Smoke test
-□ Promote to production
-□ Verify
-
-Agents:
-• test-agent: Complete ✅
-• build-agent: Complete ✅
-• deploy-agent: Running 🔥
-```
-
-#### 3. AWAITING APPROVAL Phase
-```
-🚀 Deploy Production
-
-Progress: ██████████████░░░░ 80%
-
-Tasks:
-✅ Run tests
-✅ Build artifact
-✅ Deploy to staging
-✅ Smoke test
-⏸ Promote to production [Awaiting approval]
-□ Verify
-
-⚠️ IRREVERSIBLE ACTION: Promotion to production
-Are you sure you want to proceed?
-
-[✅ Approve] [⏹ Abort]
-```
-
-#### 4. COMPLETE Phase
-```
-🚀 Deploy Production
-
-Progress: █████████████████ 100%
-
-Tasks:
-✅ Run tests
-✅ Build artifact
-✅ Deploy to staging
-✅ Smoke test
-✅ Promote to production
-✅ Verify
-
-✅ Mission completed successfully!
-Posted to: @MIYABI_CHANNEL
-Duration: 12m 34s
-```
+- **Left-align only** — No centering, no right alignment
+- **No ASCII box diagrams** — Use Markdown tables instead
+- **Tables are OK** — Markdown tables are allowed
+- **Code blocks are OK** — For config examples, code snippets, etc.
+- **Emojis carry structure** — Use them strategically
+- **Em dash separators** — Use `—` between sections
+- **↳ for hierarchy** — Indicate nested items with ↳
+- **🌸 footer** — Always end with the MISO signature
 
 ---
 
-## ⚙️ Configuration
+## Credits
 
-### Required Settings
+Created by Shunsuke Hayashi as part of the OpenClaw ecosystem.
 
-```yaml
-skills:
-  - name: mission-control
-    config:
-      telegram:
-        channel: string      # Channel ID for broadcasts
-        pin_master: boolean  # Always pin master ticket
-        pin_individual: boolean  # Pin active missions
-      approvals:
-        timeout_seconds: number  # Approval timeout
-        default_action: string   # "approve" | "abort" | "skip"
-```
-
-### Optional Settings
-
-```yaml
-skills:
-  - name: mission-control
-    config:
-      ui:
-        show_thoughts: boolean      # Show 🧠 agent reasoning
-        progress_style: string      # "bar" | "text" | "both"
-        compact_mode: boolean       # Minimal verbosity
-        max_progress_width: number # Characters for progress bar
-      recovery:
-        enable_retry: boolean       # Show retry button on errors
-        enable_skip: boolean        # Show skip button
-        enable_partial: boolean     # Show partial completion
-        auto_retry: number          # Auto-retry count (0 = disabled)
-      notifications:
-        on_start: boolean           # Notify channel on start
-        on_complete: boolean        # Notify on completion
-        on_error: boolean           # Notify on errors
-```
-
-### Environment Variables
-
-```bash
-# Optional overrides
-MISO_DEFAULT_CHANNEL="@my-team-channel"
-MISO_APPROVAL_TIMEOUT=600  # seconds
-MISO_AUTO_RETRY=2
-MISO_SHOW_THOUGHTS=true
-```
+Inspired by the need for mission-critical visibility without dashboard fatigue.
 
 ---
 
-## 📄 License
+## License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-## 👥 Credits
-
-**Created by:**  
-Shunsuke Hayashi & Miyabi 🍜
-
-**Built with:**  
-- OpenClaw Framework
-- Telegram Bot API
-- Inline Buttons (Telegram-native)
-- Edit Message API
-- Pin Messages API
-
-**Inspiration:**  
-Good ingredients, simple preparation, deep results — just like miso soup.
+MIT License — See [LICENSE](LICENSE) for details.
 
 ---
 
-<div align="center">
-
-**"Simple ingredients. Rich flavor."** 🍜
-
-Made with ❤️ for OpenClaw & ClawHub
-
-</div>
+**Ready to transform your mission visibility?** Install MISO and never wonder "what's the status?" again.

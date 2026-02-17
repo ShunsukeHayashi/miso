@@ -2,25 +2,37 @@
 """Telegram Bot API pin/unpin ヘルパー"""
 
 import json
+import os
 import sys
+from pathlib import Path
 from urllib.request import urlopen, Request
 
-# 設定ファイルからbotToken読み込み
-CONFIG_PATH = "/Users/shunsukehayashi/.openclaw/openclaw.json"
+
+def _get_config_path() -> Path:
+    """設定ファイルパスを解決（環境変数またはデフォルト）"""
+    env_path = os.environ.get("OPENCLAW_CONFIG")
+    if env_path:
+        return Path(env_path)
+    return Path.home() / ".openclaw" / "openclaw.json"
 
 
 def _get_token() -> str:
     """Bot Tokenを取得"""
-    with open(CONFIG_PATH) as f:
-        return json.load(f)["channels"]["telegram"]["botToken"]
+    config_path = _get_config_path()
+    try:
+        with open(config_path) as f:
+            return json.load(f)["channels"]["telegram"]["botToken"]
+    except FileNotFoundError:
+        raise FileNotFoundError(f"設定ファイルが見つかりません: {config_path}")
+    except KeyError:
+        raise KeyError("設定ファイルに botToken が見つかりません: channels.telegram.botToken")
 
 
-def _api_call(method: str, chat_id: int, message_id: int) -> dict:
+def _api_call(method: str, payload: dict) -> dict:
     """Telegram API呼び出し"""
     token = _get_token()
     url = f"https://api.telegram.org/bot{token}/{method}"
-    payload = json.dumps({"chat_id": chat_id, "message_id": message_id}).encode("utf-8")
-    req = Request(url, data=payload, headers={"Content-Type": "application/json"})
+    req = Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
     try:
         with urlopen(req) as res:
             return json.loads(res.read())
@@ -30,12 +42,14 @@ def _api_call(method: str, chat_id: int, message_id: int) -> dict:
 
 def pin_message(chat_id: int, message_id: int) -> dict:
     """メッセージをピン止め（通知なし）"""
-    return _api_call("pinChatMessage", chat_id, message_id)
+    payload = {"chat_id": chat_id, "message_id": message_id, "disable_notification": True}
+    return _api_call("pinChatMessage", payload)
 
 
 def unpin_message(chat_id: int, message_id: int) -> dict:
     """ピン解除"""
-    return _api_call("unpinChatMessage", chat_id, message_id)
+    payload = {"chat_id": chat_id, "message_id": message_id}
+    return _api_call("unpinChatMessage", payload)
 
 
 if __name__ == "__main__":

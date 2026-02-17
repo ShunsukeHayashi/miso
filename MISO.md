@@ -64,10 +64,22 @@ User: "Do this"
 
 ```
 CLI        → "Type command, see result"
-GUI        → "Click button, see result"  
+GUI        → "Click button, see result"
 Chat UI    → "Talk to AI, see result"
 MISO       → "Delegate to agents, see process, intervene"
 ```
+
+## 4+1 Layer UX Model
+
+MISO uses a 4+1 layer visual hierarchy for instant status recognition:
+
+| Layer | Element | Info Density | Speed |
+|-------|---------|--------------|-------|
+| Layer 0 | 📌 Pin | Minimal (presence only) | Instant upon opening chat |
+| Layer 0.5 | 👀 ackReaction | Minimal (receipt confirmation) | Instant upon message receipt |
+| Layer 1 | Reactions | Minimal (state only) | Instant in chat list |
+| Layer 2 | Message body | Medium (progress, agents) | Seconds after opening |
+| Layer 3 | Inline buttons | Action | Approval/intervention |
 
 ## Comparison
 
@@ -76,6 +88,7 @@ MISO       → "Delegate to agents, see process, intervene"
 | Agent thinking visible | ❌ | △ | ❌ | ✅ |
 | Multi-agent | ❌ | ❌ | ❌ | ✅ |
 | Mid-process intervention | ❌ | ❌ | ❌ | ✅ |
+| Partial completion handling | ❌ | ❌ | ❌ | ✅ |
 | Progress tracking | ❌ | ❌ | ❌ | ✅ |
 | Approval gates | ❌ | ❌ | ❌ | ✅ |
 | Cost tracking | ❌ | ❌ | ❌ | ✅ |
@@ -90,9 +103,10 @@ See `DESIGN-SYSTEM.md` for Telegram-safe visual language.
 
 1. **INIT** — Agents spawning, task decomposition visible
 2. **RUNNING** — Real-time progress, agent thinking, interim results
-3. **APPROVAL** — Human in the Loop gate with inline buttons
-4. **COMPLETE** — Results summary, key findings, cost report
-5. **ERROR** — Error handling, retry UI
+3. **PARTIAL** — Some agents complete, others still running
+4. **AWAITING APPROVAL** — Human in the Loop gate with inline buttons
+5. **COMPLETE** — Results summary, key findings, cost report
+6. **ERROR** — Error handling, retry UI
 
 ## Tech Stack
 

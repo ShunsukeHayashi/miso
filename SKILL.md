@@ -42,6 +42,19 @@ spawn時にTelegramへリアルタイム進捗ダッシュボードを表示・�
 実装: `message(action=react, messageId, emoji)` でフェーズ遷移時に切り替え。
 Telegram設定: `channels.telegram.reactionLevel = "extensive"` が必要。
 
+## 受信確認リアクション（ackReaction）
+
+ユーザーのメッセージ受信時に👀リアクションを即座に付与。「メッセージを受け取った」の最速フィードバック。
+返信後に自動削除（removeAckAfterReply: true）。
+
+設定:
+- messages.ackReaction: "👀"
+- messages.ackReactionScope: "all"（DM含む全メッセージ）
+- messages.removeAckAfterReply: true
+
+4層UXモデルにおけるLayer 0.5として機能。
+ピン(Layer 0)とリアクション(Layer 1)の間に位置する即時フィードバック。
+
 ## ピン止め連動
 
 ミッション稼働中はメッセージをDMトップにピン止め。完了後に解除。
