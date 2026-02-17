@@ -1,13 +1,13 @@
-# マスターチケット自動管理 — ロジック設計
+# Master Ticket Auto-Management — Logic Design
 
-## 状態管理仕様
+## State Management
 
-### 保存場所
+### Storage Location
 ```
 ~/.openclaw/workspace/skills/mission-control/.miso-state.json
 ```
 
-### データ構造
+### Data Structure
 ```json
 {
   "masterTicketId": "string",
@@ -26,73 +26,73 @@
 }
 ```
 
-## 自動更新タイミング
+## Auto-Update Triggers
 
-| イベント | アクション |
-|---------|-----------|
-| ミッション開始 | 新行追加 (`⏳ #{id} {title} (pending)`) |
-| ミッション実行中 | ステータス更新 (`🔥 #{id} {title} (running)`) |
-| ミッション完了 | ステータス更新 (`✅ #{id} {title} (complete)`) |
-| ミッションエラー | ステータス更新 (`❌ #{id} {title} (error)`) |
-| 全ミッション完了 | サマリー表示＋ピン解除 |
+| Event | Action |
+|-------|--------|
+| Mission start | Add new row (`⏳ #{id} {title} (pending)`) |
+| Mission running | Update status (`🔥 #{id} {title} (running)`) |
+| Mission complete | Update status (`✅ #{id} {title} (complete)`) |
+| Mission error | Update status (`❌ #{id} {title} (error)`) |
+| All missions complete | Show summary + unpin |
 
-## テンプレート
+## Templates
 
-### マスターチケット（稼働中）
+### Master Ticket (Active)
 ```
 📋 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟
 ——————————————
-⏳ #1 タイトル (pending)
-🔥 #2 タイトル (running)
-✅ #3 タイトル (complete)
+⏳ #1 Title (pending)
+🔥 #2 Title (running)
+✅ #3 Title (complete)
 ——————————————
-更新: 2026-02-17 08:57:00 JST
+Updated: 2026-02-17 08:57:00 JST
 🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
-### マスターチケット（全完了）
+### Master Ticket (All Complete)
 ```
 📋 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘 ✅
 ——————————————
-✅ #1 タイトル (complete)
-✅ #2 タイトル (complete)
-✅ #3 タイトル (complete)
+✅ #1 Title (complete)
+✅ #2 Title (complete)
+✅ #3 Title (complete)
 ——————————————
-全ミッション完了: 3/3
-更新: 2026-02-17 08:57:00 JST
+All missions complete: 3/3
+Updated: 2026-02-17 08:57:00 JST
 🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
-## 初回作成フロー
+## Initial Creation Flow
 
-1. `.miso-state.json` がない場合 → 新規作成
-2. `.miso-state.json` に `masterTicketId` がない場合 → 新規投稿
-3. 新規投稿時にピン固定
-4. `masterTicketId` と `chatId` を `.miso-state.json` に保存
+1. If `.miso-state.json` doesn't exist → create new
+2. If `.miso-state.json` has no `masterTicketId` → post new message
+3. Pin the new message on creation
+4. Save `masterTicketId` and `chatId` to `.miso-state.json`
 
-## 日次アーカイブルール
+## Daily Archive Rules
 
-### 実行条件
-- 時刻: 23:59 以降
-- すべてのミッションステータスが `complete` または `error`
+### Trigger Conditions
+- Time: After 23:59
+- All mission statuses are `complete` or `error`
 
-### アクション
-1. マスターチケットのピン解除
-2. `.miso-state.json` を初期化（空の状態 `{}`）
+### Actions
+1. Unpin master ticket
+2. Reset `.miso-state.json` to empty state (`{}`)
 
-## API操作
+## API Operations
 
-### メッセージ編集
+### Message Edit
 ```javascript
-// message.edit() を使用してマスターチケットを更新
+// Use message.edit() to update master ticket
 // messageId = masterTicketId
 ```
 
-### ピン操作
+### Pin Operations
 ```javascript
-// ピン固定
+// Pin
 message.pin({ disable_notification: true })
 
-// ピン解除
+// Unpin
 message.unpin()
 ```

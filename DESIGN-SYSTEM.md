@@ -1,282 +1,185 @@
-# みやび Design System — Telegram Safe
+# MISO Design System — Telegram Safe
 
-## 原則
-1. **左揃え**のみ。スペース揃え禁止。
-2. **絵文字**が構造を担う。罫線ボックス禁止。
-3. **`——————————————`** で区切り（emダッシュ14個）。
-4. **`↳`** で階層表現。
-5. **Unicode太字**でセクション名・エージェント名。
-6. **スモールキャップス**でフッター。
-7. **リアクション**でフェーズを一目で識別。
+## Principles
+1. **Left-aligned** only. No space alignment.
+2. **Emojis** carry structure. No box-drawing characters.
+3. **`——————————————`** as separator (14 em-dashes).
+4. **`↳`** for hierarchy.
+5. **Unicode bold** for section names and agent names.
+6. **Small caps** for footer.
+7. **Reactions** for at-a-glance phase identification.
 
-## 4+1層UXモデル
+## Why These Rules?
 
-Mission Controlは4+1層で情報を伝達する（Layer 0.5: 受信確認）:
+Telegram renders messages differently across iOS, Android, macOS, and Web. Monospace is inconsistent, spaces collapse, and box-drawing characters break on mobile. MISO's design system avoids all known rendering pitfalls.
 
-| 層 | 要素 | 情報密度 | 確認速度 |
-|----|------|---------|---------|
-| Layer 0 | 📌 ピン止め | 最小（存在のみ） | チャットを開いた瞬間 |
-| Layer 0.5 | 👀 受信確認（ackReaction） | 最小（即時受信確認） | メッセージ受信時 |
-| Layer 1 | リアクション絵文字 | 最小（状態のみ） | チャット一覧で即座 |
-| Layer 2 | メッセージ本文 | 中（進捗・エージェント状態） | メッセージを開いて数秒 |
-| Layer 3 | インラインボタン | アクション | 承認・操作 |
+## 4+1 Layer UX Model
 
-### Layer 0: ピン止め（ミッション存在の告知）
+MISO uses a layered information architecture. Each layer has a different read speed and information density.
+
 ```
-📌 稼働中 → ピン止め表示（チャット上部）
-✅ 完了/中止 → ピン解除
-```
-ピン止め = 「今ミッションが動いてる」という最速の視覚シグナル。
-
-### Layer 0.5: ackReaction（受信確認）
-ユーザーのメッセージに即座に👀リアクションを付与。
-返信完了後に自動削除。
-
-設定: messages.ackReaction + ackReactionScope + removeAckAfterReply
-
-### Layer 1: リアクション（一目で状態判別）
-```
-🔥 稼働中 → 👀 承認待ち → 🎉 完了
-                         → ❌ エラー
+Layer 0  📌 Pin        → "Something is happening" (instant, chat open)
+Layer 0.5 👀 ackReaction → "Message received" (instant, on receive)
+Layer 1  🔥🎉❌ Reaction → "What state is it in" (instant, chat list)
+Layer 2  Message body   → "Details and progress" (seconds, read)
+Layer 3  Inline buttons → "Take action" (tap to interact)
 ```
 
-### Layer 2: メッセージ本文（詳細情報）
-Phase 1-5のテンプレートに準拠（SKILL.md参照）
+### Layer 0: Pin (Existence)
+- Pin = "A mission exists and is active"
+- Unpin = "Mission is complete or aborted"
+- Master ticket = permanent pin (mission dashboard)
+- Individual missions = temporary pin (unpin on complete)
 
-### Layer 3: インラインボタン（アクション）
-Phase 4（承認ゲート）とPhase ERROR時に表示
+### Layer 0.5: ackReaction (Receipt)
+- 👀 on every received message = "I got your message"
+- Auto-removed after reply
+- Fastest possible feedback loop
+- Config: `messages.ackReaction: "👀"`, `messages.ackReactionScope: "all"`
 
-## コンポーネント
+### Layer 1: Reaction (State)
+- 🔥 = Running/Active
+- 👀 = Awaiting approval
+- 🎉 = Complete
+- ❌ = Error
+- Visible from chat list without opening the message
 
-### ヘッダー
+### Layer 2: Message Body (Detail)
+- Progress bars, agent status, thinking output
+- Updated via message edit (single message, no spam)
+- Contains cost, time, agent count
+
+### Layer 3: Inline Buttons (Action)
+- Approval gate: ✅ Approve / 👁 Preview / ✏️ Revise / ❌ Abort
+- Error recovery: 🔄 Retry / ⏭ Skip / 📄 Partial complete / ❌ Abort
+
+## Visual Elements
+
+### Progress Bar
+16 fixed segments using block characters:
 ```
-{emoji} 𝗧𝗜𝗧𝗟𝗘 𝗧𝗘𝗫𝗧
+░░░░░░░░░░░░░░░░  0%
+▓▓▓▓░░░░░░░░░░░░  25%
+▓▓▓▓▓▓▓▓░░░░░░░░  50%
+▓▓▓▓▓▓▓▓▓▓▓▓░░░░  75%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  100%
 ```
-例: `🤖 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟`
-完了時: `🤖 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘 ✅`
+Formula: `filled = round(percent / 100 * 16)`
 
-### メタ情報
-```
-📋 {description}
-⏱ {elapsed} ∣ 💰 ${cost}
-```
-
-### 区切り線
+### Separator
 ```
 ——————————————
 ```
+14 em-dashes (U+2014). Not hyphens. Not en-dashes.
 
-### セクションタイトル
+### Hierarchy
 ```
-↳ {emoji} 𝗦𝗘𝗖𝗧𝗜𝗢𝗡 𝗡𝗔𝗠𝗘
+↳ Subordinate item
 ```
-例: `↳ 🧩 𝗔𝗚𝗘𝗡𝗧𝗦 (2/3 complete)`
+Use `↳` (U+21B3) for indentation. Never use spaces or tabs.
 
-### エージェントブロック（稼働中）
+### Section Headers
+Use Unicode Mathematical Bold (U+1D5D4 range):
 ```
-🔥 {agent_name} ∣ {task}
-▓▓▓▓▓▓▓▓░░░░░░░░ 50%
-🧠 {thinking/interim_result}
-⏱ {time} ∣ 💰 ${cost}
-```
-
-### エージェントブロック（完了 — 展開時）
-```
-✅ {agent_name} ∣ {task}
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
-🧠 {result_summary}
-📄 Output: {filename} ({size})
-⏱ {time} ∣ 💰 ${cost}
+𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟
+𝗔𝗚𝗘𝗡𝗧𝗦
+𝗗𝗘𝗟𝗜𝗩𝗘𝗥𝗔𝗕𝗟𝗘𝗦
+𝗞𝗘𝗬 𝗜𝗡𝗦𝗜𝗚𝗛𝗧𝗦
 ```
 
-### エージェントブロック（完了 — 折り畳み時）
+### Footer
+Small caps for branding:
 ```
-✅ {agent_name} ∣ {task}
-📄 {filename} ∣ ⏱ {time} ∣ 💰 ${cost}
-```
-
-### プログレスバー
-```
-▓▓▓▓▓▓▓▓░░░░░░░░ 50%
-```
-16セグメント固定。`filled = round(percent / 100 * 16)`
-
-### 承認ゲートブロック
-```
-——————————————
-⏸️ 𝗔𝗪𝗔𝗜𝗧𝗜𝗡𝗚 𝗔𝗣𝗣𝗥𝗢𝗩𝗔𝗟
-{question}
-——————————————
-```
-
-### 成果物リスト
-```
-↳ 📄 𝗗𝗘𝗟𝗜𝗩𝗘𝗥𝗔𝗕𝗟𝗘𝗦
-——————————————
-📄 {file_1} — {description}
-📄 {file_2} — {description}
-```
-
-### インサイトリスト
-```
-↳ 💡 𝗞𝗘𝗬 𝗜𝗡𝗦𝗜𝗚𝗛𝗧𝗦
-——————————————
-1. {insight_1}
-2. {insight_2}
-3. {insight_3}
-```
-
-### 承認記録
-```
-↳ ✅ 𝗔𝗣𝗣𝗥𝗢𝗩𝗘𝗗
-——————————————
-承認者: {approver} ∣ {timestamp}
-アクション: {action}
-```
-
-### フッター
-```
-——————————————
 🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
-## ステータスアイコン
+### Status Icons
 
-| 用途 | アイコン |
-|------|---------|
-| 初期化 | ⏳ |
-| 実行中 | 🔥 |
-| 書込中 | ✏️ |
-| 待機中 | ⏸️ |
-| 完了 | ✅ |
-| エラー | ❌ |
-| リトライ | 🔄 |
-| 警告 | ⚠️ |
-| 承認待ち | ⏸️ |
+| State | Icon | Label |
+|-------|------|-------|
+| Initializing | ⏳ | INIT |
+| Running | 🔥 | RUNNING |
+| Writing | ✏️ | WRITING |
+| Waiting | ⏸️ | WAITING |
+| Done | ✅ | DONE |
+| Error | ❌ | ERROR |
+| Retry | 🔄 | RETRY |
+| Awaiting Approval | ⏸️ | AWAITING APPROVAL |
 
-## カテゴリアイコン
-
-| 用途 | アイコン |
-|------|---------|
-| ミッション | 📋 |
-| ゴール | 🎯 |
-| 検索 | 🔍 |
-| データ | 📊 |
-| 執筆 | 📝 |
-| レビュー | ✅ |
-| ファイル | 📁 |
-| ドキュメント | 📄 |
-| ヒント/中間結果 | 💡 |
-| 依存関係 | 🔗 |
-| コスト | ⚡ |
-| 時間 | ⏱ |
-| エージェント | 🤖 |
-| みやび | 🌸 |
-| 思考 | 🧠 |
-| パーツ | 🧩 |
-
-## インラインボタン定義
-
-### 承認ゲート（Phase 4）
-```json
-[
-  [
-    {"text": "✅ 承認", "callback_data": "mc:approve"},
-    {"text": "👁 プレビュー", "callback_data": "mc:preview"}
-  ],
-  [
-    {"text": "✏️ 修正指示", "callback_data": "mc:revise"},
-    {"text": "❌ 中止", "callback_data": "mc:abort"}
-  ]
-]
+### Strikethrough for Completion
+Use Telegram `~text~` for completed tasks in WBS-style tickets:
+```
+~✅ Task 1 — Complete~
+👉 🔥 Task 2 — IN PROGRESS
+⬜ Task 3 — Not started
 ```
 
-### エラーリカバリ（Phase ERROR）
-```json
-[
-  [
-    {"text": "🔄 リトライ", "callback_data": "mc:retry"},
-    {"text": "⏭ スキップ", "callback_data": "mc:skip"}
-  ],
-  [
-    {"text": "📄 部分結果で完了", "callback_data": "mc:partial_complete"},
-    {"text": "❌ 中止", "callback_data": "mc:abort"}
-  ]
-]
-```
+## Channel Integration
 
-## チャンネル投稿タイプ別アイコン
+### Privacy Rules
+Channel posts must NOT contain:
+- 💰 Cost information
+- ❌ Error details
+- ⏸️ Approval gates
+- 🧠 Agent thinking output
 
-| タイプ | アイコン |
-|--------|---------|
-| おはよう | 🌅 |
-| AI Today | 🧠 |
-| プロジェクト | 📊 |
-| まとめ | 🌙 |
-| KAEDE | 🔬 |
-| 速報 | 🚨 |
-| お知らせ | 📢 |
-| 起動通知 | 🌸 |
+Channel receives only:
+- 🚀 Mission started (description + agent count)
+- ✅ Mission complete (description + key insights)
 
-## DM × チャンネル連動モデル
+### Master Ticket (WBS Style)
+
+Goal-driven structure with milestone tracking:
 
 ```
-DM（オペレーター）          チャンネル（ログ）
-┌─────────────────┐     ┌──────────────────┐
-│📌 マスターチケット │     │                  │
-│  (常駐ピン)       │     │                  │
-├─────────────────┤     │                  │
-│📌 Mission #1 🔥  │ ──→ │🚀 Mission Started│
-│  (一時ピン)       │     │                  │
-│  edit更新中...    │     │  (進捗は非公開)   │
-│  📌→アンピン      │ ──→ │✅ Mission Done   │
-└─────────────────┘     └──────────────────┘
+🎯 𝗚𝗢𝗔𝗟: {project goal}
+——————————————
+
+📌 𝗠𝗶𝗹𝗲𝘀𝘁𝗼𝗻𝗲 𝟭: {name}
+~✅ T1: {task}~
+~✅ T2: {task}~
+
+📌 𝗠𝗶𝗹𝗲𝘀𝘁𝗼𝗻𝗲 𝟮: {name}
+👉 🔥 T3: {task} — IN PROGRESS
+⬜ T4: {task}
+
+——————————————
+Updated: {timestamp}
+Next: {next milestone}
+🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
-- DM: 全情報（4+1層UX）
-- チャンネル: 開始 + 完了のみ（ノイズ最小）
-- コスト等の内部情報はチャンネルには出さない
+## Forbidden Patterns
 
-## 取り消し線（完了タスクの消し込み）
-
-Telegramの `~テキスト~` で取り消し線が使える。
-完了済みタスクに適用し、「終わった感」を視覚的に強調。
-
+### ❌ Box-drawing characters
 ```
-✅ ~1.0 設計フェーズ~
-  ~1.1 デザインシステム確定~
-  ~1.2 全6フェーズテンプレート~
+┏━━━━━━━━━━━━━━━━━━━━┓
+┃  Breaks on mobile    ┃
+┗━━━━━━━━━━━━━━━━━━━━┛
 ```
 
-- 完了フェーズ: `✅ ~{phase_name}~`
-- 完了タスク: `~{wbs_number} {task_name}~`
-- 未完了: 取り消し線なし
-
-## WBS型マスターチケット構造
-
+### ❌ Space alignment
 ```
-🎯 ゴール（最上位）
-📊 プログレスバー
-
-✅ ~1.0 完了フェーズ~ ← 消し込み
-  ~1.1 完了タスク~
-
-👉 2.0 現在フェーズ ← 𝗜𝗠𝗔 𝗞𝗢𝗞𝗢
-  ⏸️ 2.1 次のタスク
-
-⬜ 3.0 未着手フェーズ
-  ⬜ 3.1 未着手タスク
+Agent 1    ████░░░░  50%
+Agent 2    ██░░░░░░  25%
 ```
+Spaces render differently across clients.
 
-状態アイコン:
-- ✅ 完了（+ 取り消し線）
-- 👉 現在進行中（← 𝗜𝗠𝗔 𝗞𝗢𝗞𝗢）
-- ⏸️ 次の待ち
-- ⬜ 未着手
+### ❌ DAG ASCII art
+```
+    T1 ──┐
+    T2 ──┼──→ T5 ──→ T6
+    T3 ──┤
+    T4 ──┘
+```
+Collapses on mobile. Use inline text instead: `T1-4 (parallel) → T5 → T6`
 
-## 禁止事項
-- `┏┗┓┛━┃` 罫線文字 → 崩れる
-- スペースによる位置揃え → プロポーショナルフォントで崩れる
-- `<b>` `<i>` HTMLタグ → Telegram Bot APIはMarkdown/HTMLモード依存
-- 長い1行（60文字超） → 折り返しが予測不能
-- 同一メッセージへの連続edit（1秒間隔未満） → Telegram API rate limit
+### ❌ Markdown tables
+Tables don't render in Telegram. Use vertical lists instead.
+
+## Tested Platforms
+- ✅ Telegram iOS
+- ✅ Telegram Android
+- ✅ Telegram macOS
+- ✅ Telegram Web
+- ✅ Telegram Desktop (Windows/Linux)

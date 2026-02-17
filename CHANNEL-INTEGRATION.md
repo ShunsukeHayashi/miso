@@ -1,29 +1,29 @@
 # CHANNEL-INTEGRATION.md
-# MIYABI Channel 自動投稿仕様
+# Channel Auto-Posting Specification
 
-## 概要
+## Overview
 
-@MIYABI_CHANNEL (chatId: -1003700344593) へのミッション開始/完了通知の自動投稿設計。
+Auto-post mission start/complete notifications to @MIYABI_CHANNEL (chatId: -1003700344593).
 
-- **DM内のMission Controlとは独立**：チャンネル向けに別途投稿ロジック
-- **ノイズ抑制**：開始と完了のみ投稿
-
----
-
-## 1. 投稿タイミング
-
-| イベント | 投稿 | 内容 |
-|---------|------|------|
-| ミッション開始時 | ✅ | 🚀 開始通知 |
-| ミッション完了時 | ✅ | ✅ 完了レポート（Key Insightsのみ） |
-| エラー発生時 | ❌ | 投稿しない |
-| 進捗中 | ❌ | 投稿しない |
+- **Independent from DM Mission Control**: Separate posting logic for channel
+- **Noise reduction**: Only start and complete notifications
 
 ---
 
-## 2. 投稿テンプレート（確定版）
+## 1. Posting Triggers
 
-### ミッション開始通知
+| Event | Post | Content |
+|-------|------|---------|
+| Mission start | ✅ | 🚀 Start notification |
+| Mission complete | ✅ | ✅ Completion report (Key Insights only) |
+| Error | ❌ | Do not post |
+| In progress | ❌ | Do not post |
+
+---
+
+## 2. Post Templates (Final)
+
+### Mission Start Notification
 
 ```
 🚀 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗦𝗧𝗔𝗥𝗧𝗘𝗗
@@ -34,7 +34,7 @@
 🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
-### ミッション完了レポート
+### Mission Complete Report
 
 ```
 ✅ 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗠𝗣𝗟𝗘𝗧𝗘
@@ -51,34 +51,34 @@
 🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
-**変数定義:**
+**Variable Definitions:**
 
-| 変数 | 説明 | 例 |
-|------|------|-----|
-| `{mission_description}` | ミッションの簡潔な説明 | "週次レポート作成" |
-| `{agent_count}` | デプロイされたエージェント数 | "3" |
-| `{total_time}` | 総所要時間 | "2m 34s" |
-| `{insight_1..3}` | Key Insights（最大3件） | "コスト削減20%達成" |
-
----
-
-## 3. プライバシールール
-
-| 項目 | チャンネル出力可否 |
-|------|------------------|
-| 💰 コスト情報 | ❌ 出さない |
-| エージェント名 | ✅ 出してOK |
-| エラー詳細 | ❌ 出さない |
-| 承認ゲート | DMのみ（チャンネルには出さない） |
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{mission_description}` | Brief mission description | "Weekly report generation" |
+| `{agent_count}` | Number of deployed agents | "3" |
+| `{total_time}` | Total elapsed time | "2m 34s" |
+| `{insight_1..3}` | Key Insights (max 3) | "Achieved 20% cost reduction" |
 
 ---
 
-## 4. 実装方法
+## 3. Privacy Rules
 
-### 投稿関数呼び出し
+| Item | Channel Output |
+|------|----------------|
+| 💰 Cost information | ❌ Never show |
+| Agent names | ✅ OK to show |
+| Error details | ❌ Never show |
+| Approval gates | ❌ DM only |
+
+---
+
+## 4. Implementation
+
+### Posting Function Calls
 
 ```typescript
-// 開始通知
+// Start notification
 await message({
   action: "send",
   channel: "telegram",
@@ -89,7 +89,7 @@ await message({
   }),
 });
 
-// 完了レポート
+// Completion report
 await message({
   action: "send",
   channel: "telegram",
@@ -103,40 +103,34 @@ await message({
 });
 ```
 
-### Key Insights 抽出ロジック（補助）
+### Key Insights Extraction (Helper)
 
 ```typescript
 function extractKeyInsights(result: MissionResult): string[] {
-  // 成果物から重要なポイントを抽出
-  // - 成果物の主要な成果
-  // - 削減/改善の定量的な指標
-  // - 技術的な新規性
-  // 最大3件に制限
+  // Extract important points from deliverables
+  // - Major achievements
+  // - Quantitative improvements/reductions
+  // - Technical novelty
+  // Limited to max 3 items
 }
 ```
 
 ---
 
-## 5. 実装チェックリスト
+## 5. Implementation Checklist
 
-- [ ] ミッション開始フックにチャンネル投稿を追加
-- [ ] ミッション完了フックにチャンネル投稿を追加
-- [ ] Key Insights抽出関数の実装
-- [ ] プライバシールール（コスト非表示）の適用
-- [ ] エラーハンドリング（チャンネル投稿失敗時はDMへ通知）
-- [ ] テスト: 実際に @MIYABI_CHANNEL に投稿確認
+- [ ] Add channel post to mission start hook
+- [ ] Add channel post to mission complete hook
+- [ ] Implement Key Insights extraction function
+- [ ] Apply privacy rules (no cost display)
+- [ ] Error handling (notify DM if channel post fails)
+- [ ] Test: Verify actual post to @MIYABI_CHANNEL
 
 ---
 
-## 6. 付録: ターゲットチャンネル情報
+## 6. Appendix: Target Channel Info
 
-- **チャンネル名:** @MIYABI_CHANNEL
+- **Channel name:** @MIYABI_CHANNEL
 - **chatId:** -1003700344593
-- **目的:** チーム共有用の通知チャンネル
-- **特性:** ノイズ抑制重視
-
----
-
-*Document Version: 1.0*
-*Created: 2026-02-17*
-*MISO Project - Task T4*
+- **Purpose:** Team-facing notification channel
+- **Policy:** Noise reduction priority

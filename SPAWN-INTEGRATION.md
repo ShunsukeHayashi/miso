@@ -1,22 +1,22 @@
 # SPAWN-INTEGRATION.md
 
-## 概要
+## Overview
 
-OpenClawの`sessions_spawn`で起動したサブエージェントの完了通知をトリガーに、Mission Controlボードを自動更新する設計。
+Automatically update the Mission Control board when sub-agents launched via OpenClaw's `sessions_spawn` complete or fail.
 
 ---
 
-## 1. ミッション開始フロー
+## 1. Mission Start Flow
 
-### 1.1 前提
-- タスク分解済み
-- エージェント一覧決定済み
-- 不可逆操作の有無判定済み
+### 1.1 Prerequisites
+- Task decomposition complete
+- Agent list determined
+- Irreversible operation check done
 
-### 1.2 実行手順
+### 1.2 Execution Steps
 
 ```python
-# 1. Phase 1 INITメッセージ送信
+# 1. Send Phase 1 INIT message
 init_msg = await message_send(
     channel=MISSION_CONTROL_CHANNEL,
     message=mission_board_template(
@@ -28,18 +28,18 @@ init_msg = await message_send(
 )
 message_id = init_msg.messageId
 
-# 2. ピン止め
+# 2. Pin message
 await miso_telegram_pin(message_id)
 
-# 3. リアクション🔥
+# 3. React with 🔥
 await message_react(channel=MISSION_CONTROL_CHANNEL, messageId=message_id, emoji="🔥")
 
-# 4. 各エージェントをspawn
+# 4. Spawn each agent
 agent_states = {}
 for agent_name, agent_task in agents.items():
     result = await sessions_spawn(
         prompt=agent_task,
-        label=agent_name,  # 完了通知の識別に使用
+        label=agent_name,  # Used to identify completion notifications
         ...
     )
     agent_states[agent_name] = {
@@ -49,11 +49,11 @@ for agent_name, agent_task in agents.items():
         "findings": None
     }
 
-# 5. 全エージェントの状態をRUNNINGに遷移
+# 5. Transition all agents to RUNNING
 for agent_name in agent_states:
     agent_states[agent_name]["status"] = "RUNNING"
 
-# 6. ミッションボード更新（Phase 2）
+# 6. Update mission board (Phase 2)
 await message_edit(
     channel=MISSION_CONTROL_CHANNEL,
     messageId=message_id,
@@ -67,18 +67,18 @@ await message_edit(
 
 ---
 
-## 2. エージェント完了時のフロー
+## 2. Agent Completion Flow
 
-### 2.1 完了通知の検知
+### 2.1 Completion Notification Detection
 
 ```
 "A subagent task X just completed/failed"
 ```
 
-このパターンをログまたはイベントストリームで検知。
+Detect this pattern via log or event stream.
 
 ```python
-# 正規表現で抽出
+# Regex extraction
 pattern = r'A subagent task (.*?) just (completed|failed)'
 match = re.search(pattern, notification)
 
@@ -86,22 +86,22 @@ agent_name = match.group(1)
 status = "DONE" if match.group(2) == "completed" else "ERROR"
 ```
 
-### 2.2 状態更新
+### 2.2 State Update
 
 ```python
-# 該当エージェントの状態を更新
+# Update the relevant agent's state
 agent_states[agent_name]["status"] = status
 
-# 完了時はFindingsを要約
+# Summarize findings on completion
 if status == "DONE":
     findings = await summarize_findings(agent_name)
     agent_states[agent_name]["findings"] = findings
 ```
 
-### 2.3 ミッションボード更新
+### 2.3 Mission Board Update
 
 ```python
-# Phase判定・遷移
+# Phase determination & transition
 done_count = sum(1 for s in agent_states.values() if s["status"] == "DONE")
 error_count = sum(1 for s in agent_states.values() if s["status"] == "ERROR")
 total = len(agent_states)
@@ -109,18 +109,17 @@ total = len(agent_states)
 if error_count > 0:
     phase = "ERROR"
 elif done_count == total:
-    # 全員完了
     if has_irreversible_operations:
-        phase = 4
+        phase = 4  # Awaiting approval
     else:
-        phase = 5
+        phase = 5  # Complete
 else:
-    phase = 3  # 実行中
+    phase = 3  # Partial
 
-# 進捗計算
+# Calculate progress
 progress = int(done_count / total * 100)
 
-# ボード更新
+# Update board
 await message_edit(
     channel=MISSION_CONTROL_CHANNEL,
     messageId=message_id,
@@ -132,15 +131,15 @@ await message_edit(
 )
 ```
 
-### 2.4 全員完了時の処理
+### 2.4 All Agents Complete
 
-#### Phase 4（承認ゲートあり）
+#### Phase 4 (Approval gate)
 ```python
 await message_react(channel=MISSION_CONTROL_CHANNEL, messageId=message_id, emoji="👀")
-# 承認ボタンを含める
+# Include approval buttons
 ```
 
-#### Phase 5（完了）
+#### Phase 5 (Complete)
 ```python
 await message_react(channel=MISSION_CONTROL_CHANNEL, messageId=message_id, emoji="🎉")
 await miso_telegram_unpin(message_id)
@@ -148,7 +147,7 @@ await miso_telegram_unpin(message_id)
 
 ---
 
-## 3. エラー時のフロー
+## 3. Error Flow
 
 ```python
 # Phase ERROR
@@ -160,7 +159,7 @@ await message_edit(
     message=update_board(
         phase="ERROR",
         agent_states=agent_states,
-        error_message=f"{agent_name}でエラー発生",
+        error_message=f"Error in {agent_name}",
         retry_button=True
     )
 )
@@ -170,37 +169,37 @@ await message_react(channel=MISSION_CONTROL_CHANNEL, messageId=message_id, emoji
 
 ---
 
-## 4. ステータス判定ロジック
+## 4. Status Determination Logic
 
-### 4.1 エージェント状態遷移
+### 4.1 Agent State Transitions
 
 ```
 INIT → RUNNING → DONE
             ↘ ERROR
 ```
 
-### 4.2 プログレスバー計算
+### 4.2 Progress Bar Calculation
 
 ```python
 progress = (done_count / total_agents) * 100
 
-# 表示例: ████████░░░░░░░░ 40%
+# Display: ████████░░░░░░░░ 40%
 ```
 
-### 4.3 Phase判定ルール
+### 4.3 Phase Determination Rules
 
-| 条件 | Phase | 説明 |
-|------|-------|------|
-| 初期化中 | 1 | INITメッセージ送信直後 |
-| 実行中 | 2 | 全エージェントRUNNING |
-| 部分完了 | 3 | 1以上がDONE、未完了あり |
-| 承認待ち | 4 | 全員完了 + 不可逆操作あり |
-| 完了 | 5 | 全員完了 + 不可逆操作なし |
-| エラー | ERROR | いずれかがERROR |
+| Condition | Phase | Description |
+|-----------|-------|-------------|
+| Initializing | 1 | Right after INIT message sent |
+| Running | 2 | All agents RUNNING |
+| Partial | 3 | 1+ DONE, some still running |
+| Awaiting approval | 4 | All DONE + irreversible ops pending |
+| Complete | 5 | All DONE + no irreversible ops |
+| Error | ERROR | Any agent in ERROR state |
 
 ---
 
-## 5. データ構造
+## 5. Data Structures
 
 ### 5.1 agent_states
 
@@ -210,43 +209,18 @@ progress = (done_count / total_agents) * 100
         "status": "INIT | RUNNING | DONE | ERROR",
         "subagent_session": "session-id",
         "messageId": "telegram-message-id",
-        "findings": "要約された結果"
+        "findings": "Summarized result"
     },
     ...
 }
 ```
 
-### 5.2 ミッションボードテンプレート
-
-```
-🔥 ミッション: {mission_name}
-
-📊 進捗: [████░░░░] 40%
-
-🧠 エージェント:
-✅ agent1 - DONE
-   Findings: 要約...
-🔄 agent2 - RUNNING
-⏳ agent3 - INIT
-
-Phase: {phase}
-{buttons}
-```
-
 ---
 
-## 6. 実装上の注意点
+## 6. Implementation Notes
 
-1. **messageIdの管理**: 初期化メッセージのIDを保持し、全更新で使用
-2. **labelの重要性**: spawn時のlabelで完了通知のエージェントを識別
-3. **並列性**: 各エージェントの完了順序に依存しない設計
-4. **不可逆操作判定**: ミッション開始時に判定し、Phase 4/5を決定
-5. **エラーハンドリング**: 単一エージェントのエラーで全体を止めない
-
----
-
-## 7. 次ステップ
-
-- `sessions_spawn`の完了通知フォーマット確認
-- `miso_telegram.py`のpin/unpin実装
-- Phaseテンプレートの作成
+1. **messageId management**: Retain the INIT message ID and use it for all updates
+2. **Label importance**: Use spawn label to identify agents in completion notifications
+3. **Parallelism**: Design must not depend on agent completion order
+4. **Irreversible operation check**: Determine at mission start, affects Phase 4/5 routing
+5. **Error handling**: Single agent error should not halt the entire mission
