@@ -52,7 +52,7 @@ Telegram設定: `channels.telegram.reactionLevel = "extensive"` が必要。
 - messages.ackReactionScope: "all"（DM含む全メッセージ）
 - messages.removeAckAfterReply: true
 
-4層UXモデルにおけるLayer 0.5として機能。
+4+1層UXモデルにおけるLayer 0.5として機能。
 ピン(Layer 0)とリアクション(Layer 1)の間に位置する即時フィードバック。
 
 ## ピン止め連動
@@ -377,7 +377,7 @@ bar = "▓" × filled + "░" × (16 - filled)
 ## 投稿先（DM + チャンネル連動）
 
 ### DM（オペレーター向け — フル機能）
-4層UXモデルの全機能。ピン止め、リアクション、プログレスバー、インラインボタン。
+4+1層UXモデルの全機能。ピン止め、リアクション、プログレスバー、インラインボタン。
 
 ### チャンネル（@MIYABI_CHANNEL — ミッションログ）
 ミッションの開始と完了を自動投稿。進捗の詳細はDMのみ。

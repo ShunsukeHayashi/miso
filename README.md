@@ -1,4 +1,4 @@
-# MISO — Mission-Interstate Sync Orchestrator
+# MISO — Mission Inline Skill Orchestration
 
 [![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://github.com/shunsukehayashi/openclaw)
 [![Reaction Level](https://img.shields.io/badge/Reactions-Extensive-brightgreen)](https://docs.openclaw.ai/channels/telegram#reaction-levels)
@@ -10,13 +10,13 @@
 
 ## What is MISO?
 
-MISO is an OpenClaw skill that implements a 4-layer UX model for mission-critical work. It leverages Telegram's rich reaction system to give you immediate state visibility at a glance—no need to open conversations to check progress.
+MISO is an OpenClaw skill that implements a 4+1 layer UX model for mission-critical work. It leverages Telegram's rich reaction system to give you immediate state visibility at a glance—no need to open conversations to check progress.
 
 Unlike traditional project management tools that require dashboards, refreshes, or manual status checks, MISO pushes state changes to the surface using emoji reactions and strategic message patterns. Your agents read `SKILL.md` and follow the patterns automatically—no Python code required.
 
 ---
 
-## 4-Layer UX Model
+## 4+1 Layer UX Model
 
 MISO organizes communication into four distinct layers, each optimized for speed and cognitive load:
 
@@ -97,7 +97,7 @@ This phase covers the core feature development:
   ↳ Integration testing
 
 Next: Validation & Review phase
-🌸 MISO · Auto-generated
+🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
 Key design elements:
@@ -197,7 +197,7 @@ Status: 🔥 In Progress (60%)
   ↳ Rollback plan verification
 
 Next: Testing phase kickoff
-🌸 MISO · Master Ticket
+🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
 ---
