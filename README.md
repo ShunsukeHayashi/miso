@@ -8,6 +8,14 @@
 
 ---
 
+## Demo
+
+https://github.com/user-attachments/assets/miso-demo.mp4
+
+> Real-time multi-agent orchestration in Telegram. No Web UI needed.
+
+---
+
 ## What is MISO?
 
 MISO is an OpenClaw skill that implements a 4+1 layer UX model for mission-critical work. It leverages Telegram's rich reaction system to give you immediate state visibility at a glance—no need to open conversations to check progress.
