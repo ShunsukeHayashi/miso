@@ -25,7 +25,7 @@ Visualize the entire mission lifecycle through single-message edit updates + rea
 | Done | ✅ | `𝗗𝗢𝗡𝗘` |
 | Error | ❌ | `𝗘𝗥𝗥𝗢𝗥` |
 | Retry | 🔄 | `𝗥𝗘𝗧𝗥𝗬` |
-| Awaiting Approval | ⏸️ | `𝗔𝗪𝗔𝗜𝗧𝗜𝗡𝗚 𝗔𝗣𝗣𝗥𝗢𝗩𝗔𝗟` |
+| Awaiting Approval | ⏸️ | `𝗔𝗪𝗔𝗜𝗧𝗜𝗡𝗚 𝗔𝗣𝗽𝗥𝗢𝗩𝗔𝗟` |
 
 ## Reaction Integration
 
@@ -118,6 +118,9 @@ Reaction: 🔥
 
 Reaction: 🔥
 
+**GIF Integration**: Use `miso-running.gif` for animated progress visualization.
+See "GIF Integration" section below for implementation details.
+
 ```
 🤖 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟
 ——————————————
@@ -128,12 +131,12 @@ Reaction: 🔥
 ——————————————
 
 🔥 {agent_1_name} ∣ {agent_1_task}
-▓▓▓▓▓▓▓▓▓░░░░░░░ 56%
+▓▓▓▓▓▓▓▓░░░░░░░ 56%
 🧠 {agent_1_thinking}
 ⏱ {time} ∣ 💰 ${cost}
 
 🔥 {agent_2_name} ∣ {agent_2_task}
-▓▓▓▓▓▓░░░░░░░░░░ 38%
+▓▓▓▓▓░░░░░░░░░░ 38%
 🧠 {agent_2_thinking}
 ⏱ {time} ∣ 💰 ${cost}
 
@@ -148,6 +151,10 @@ Reaction: 🔥
 ### Phase 3: PARTIAL (Partial completion — Some done, others running)
 
 Reaction: 🔥
+
+**GIF Integration**: Use `miso-partial.gif` for animated progress visualization.
+Active agents (🔥) display GIF; completed agents (✅) show static progress.
+See "GIF Integration" section below for implementation details.
 
 ```
 🤖 𝗠𝗜𝗦𝗦𝗜𝗢𝗡 𝗖𝗢𝗡𝗧𝗥𝗢𝗟
@@ -171,7 +178,7 @@ Reaction: 🔥
 ⏱ {time} ∣ 💰 ${cost}
 
 🔥 {agent_3_name} ∣ {agent_3_task}
-▓▓▓▓▓▓▓▓▓▓░░░░░░ 56%
+▓▓▓▓▓▓▓▓▓░░░░░░ 56%
 🧠 {agent_3_thinking}
 ⏱ {time} ∣ 💰 ${cost}
 
@@ -230,7 +237,7 @@ Button definitions:
 Button behavior:
 - `mc:approve` → Proceed to Phase 5, execute irreversible operation
 - `mc:preview` → Send detailed preview as a separate message
-- `mc:revise` → Ask user for revision instructions, re-spawn the relevant agent
+- `mc:revise` → Ask user for revision instructions, re-spawn agent
 - `mc:abort` → Abort mission, save partial deliverables
 
 ### Phase 5: COMPLETE (Mission complete)
@@ -320,6 +327,90 @@ Examples:
 - 75%: `▓▓▓▓▓▓▓▓▓▓▓▓░░░░`
 - 100%: `▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓`
 
+## GIF Integration
+
+MISO supports animated progress visualization using GIF files.
+Use `scripts/miso_telegram.py` for sending and updating animations.
+
+### Available GIFs
+
+| Phase | GIF File | Description |
+|-------|----------|-------------|
+| init | `miso-init.gif` | Mission initialization |
+| running | `miso-running.gif` | Active progress animation |
+| partial | `miso-partial.gif` | Partial completion |
+| approval | `miso-approval.gif` | Awaiting approval |
+| complete | `miso-complete.gif` | Mission complete |
+| error | `miso-error.gif` | Error occurred |
+
+### Agent-Specific GIFs
+
+For agents with custom visualization:
+- `agent-{name}-init.gif` — Agent initialization
+- `agent-{name}-running.gif` — Agent active
+- `agent-{name}-complete.gif` — Agent complete
+
+Example: `agent-researcher-running.gif`
+
+### Implementation Steps
+
+**Phase 1: Send initial animation**
+```bash
+python3 scripts/miso_telegram.py send <chat_id> init "<caption>"
+```
+
+**Phase 2-3: Update animation**
+```bash
+python3 scripts/miso_telegram.py edit <chat_id> <message_id> running "<caption>"
+```
+
+**Phase 4-5: Update to completion/approval**
+```bash
+python3 scripts/miso_telegram.py edit <chat_id> <message_id> complete "<caption>"
+```
+
+### GIF Usage Rules
+
+- **Phase 1-2**: Always use GIF for visual feedback
+- **Phase 3**: Show GIF only for active agents; completed agents show static progress
+- **Phase 4-5**: GIF + approval buttons / completion message
+- **ERROR**: GIF + error message + recovery buttons
+
+### Caption Updates
+
+GIF captions use `editMessageMedia` to update without re-sending the entire message.
+This provides smooth transitions between phases.
+
+### Asset Location
+
+GIF files are stored in:
+```
+skills/miso/assets/           # Phase GIFs (init, running, complete, etc.)
+skills/miso/assets/progress/  # Progress bar GIF (Issue #2)
+```
+
+### Progress Bar GIF (Issue #2)
+
+An animated progress bar GIF is available for inline progress visualization.
+
+| File | Path | Spec |
+|------|------|------|
+| `progress.gif` | `assets/progress/progress.gif` | 21フレーム, 400×40px |
+
+**仕様:**
+- フレーム数: 21 (0%〜100%, 5%刻み)
+- サイズ: 400×40px
+- 配色: オレンジ→イエロー グラデーション (`#FF8C42` → `#FFD700`)
+- 背景: ダークグレー (`#1A1A1A`)
+- フレーム間隔: 120ms / frame
+- 生成スクリプト: `scripts/generate_progress_gif.py`
+
+**再生成コマンド:**
+```bash
+cd skills/miso
+python3 scripts/generate_progress_gif.py
+```
+
 ## Implementation Flow
 
 ### 1. Mission Start
@@ -334,14 +425,15 @@ Examples:
 ### 2. Agents Running
 ```
 1. Update agent status
-2. Edit message with Phase 2 template
-3. Show agent intermediate output in 🧠 thinking line
+2. Send animation with `miso-running.gif` (use `miso_telegram.py send_animation`)
+3. Update message caption with Phase 2 template (use `editMessageMedia`)
+4. Show agent intermediate output in 🧠 thinking line
 ```
 
 ### 3. Partial Completion
 ```
 1. Update completed agents to ✅, show progress for remaining
-2. Edit message with Phase 3 template
+2. Update message caption with Phase 3 template (use `editMessageMedia`)
 3. Keep 🔥 reaction
 ```
 
@@ -428,15 +520,16 @@ Individual mission messages use temporary pins (unpin on complete).
 ```
 📌 𝗠𝗜𝗦𝗢 𝗗𝗔𝗦𝗛𝗕𝗢𝗔𝗥𝗗
 ——————————————
-🔥 #1 PPAL competitive analysis (3/5 agents)
-👀 #2 note content — awaiting approval
-✅ #3 KAEDE paper research — 3m ago
+1️⃣ 🔥 #1 PPAL analysis (3/5 agents)
+2️⃣ 👀 #2 note記事 — 承認待ち
+3️⃣ ✅ #3 KAEDE調査 — 完了済み
 ——————————————
-⏱ Today: 3 missions ∣ 💰 $0.45
+今日: 3ミッション ∣ 💰 $0.45
 🌸 ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍɪʏᴀʙɪ
 ```
 
 Master ticket stays permanently pinned. Individual missions unpin on completion.
+Numbered emojis (1️⃣ 2️⃣ 3️⃣) allow quick visual identification from chat list.
 
 ## Unicode Bold Conversion Table
 
