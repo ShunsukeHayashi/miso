@@ -385,7 +385,30 @@ This provides smooth transitions between phases.
 
 GIF files are stored in:
 ```
-/Users/a003/.openclaw/workspace/miso/assets/
+skills/miso/assets/           # Phase GIFs (init, running, complete, etc.)
+skills/miso/assets/progress/  # Progress bar GIF (Issue #2)
+```
+
+### Progress Bar GIF (Issue #2)
+
+An animated progress bar GIF is available for inline progress visualization.
+
+| File | Path | Spec |
+|------|------|------|
+| `progress.gif` | `assets/progress/progress.gif` | 21フレーム, 400×40px |
+
+**仕様:**
+- フレーム数: 21 (0%〜100%, 5%刻み)
+- サイズ: 400×40px
+- 配色: オレンジ→イエロー グラデーション (`#FF8C42` → `#FFD700`)
+- 背景: ダークグレー (`#1A1A1A`)
+- フレーム間隔: 120ms / frame
+- 生成スクリプト: `scripts/generate_progress_gif.py`
+
+**再生成コマンド:**
+```bash
+cd skills/miso
+python3 scripts/generate_progress_gif.py
 ```
 
 ## Implementation Flow
