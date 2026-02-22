@@ -16,13 +16,13 @@ All status messages are plain text for mobile-friendly readability.
 
 | Menu command | Effect |
 |---|---|
-| `/start` | Start mission output header (issue/goal/risk) |
-| `/plan` | Expand standard execution plan block |
-| `/close` | Expand standard closeout block |
-| `/status` | Show mission status check template |
-| `/task_start` | Alias to `/task-start` |
-| `/task_plan` | Alias to `/task-plan` |
-| `/task_close` | Alias to `/task-close` |
+| `/miso_start` | Start mission output header (issue/goal/risk) |
+| `/miso_plan` | Expand standard execution plan block |
+| `/miso_close` | Expand standard closeout block |
+| `/miso_status` | Show mission status check template |
+| `/miso_task_start` | Alias to `/task-start` |
+| `/miso_task_plan` | Alias to `/task-plan` |
+| `/miso_task_close` | Alias to `/task-close` |
 
 ## One-line examples
 
