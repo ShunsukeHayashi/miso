@@ -59,3 +59,18 @@ To apply now:
 ```powershell
 pwsh .\scripts\set-telegram-commands.ps1 -BotToken "<YOUR_TELEGRAM_BOT_TOKEN>"
 ```
+
+### Quick reference (one-screen)
+
+**Instant operation table**
+
+- `start` or `task_start` → initialize mission format (owner/issue/goal)
+- `plan` or `task_plan` → output execution breakdown (analysis/plan/execute/verify)
+- `close` or `task_close` → complete summary format (result/risk/notify)
+- `status` → quick status/approval check
+- `agent analyze` → mission context and impact classification
+- `agent execute` → start multi-agent run mode
+- `agent review` → review/quality check pass template
+- `agent status` → run-state readback and next action
+
+This format is optimized for mobile and copy-paste operations.
