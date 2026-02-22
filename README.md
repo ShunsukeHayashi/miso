@@ -240,3 +240,17 @@ MIT License — See [LICENSE](LICENSE) for details.
 ---
 
 **Ready to transform your mission visibility?** Install MISO and never wonder "what's the status?" again.
+
+## Slash Commands
+
+You can use compact commands in issue comments:
+
+- `/agent analyze`
+- `/agent execute`
+- `/agent review`
+- `/agent status`
+- `/task-start`
+- `/task-plan`
+- `/task-close`
+
+These commands help keep work structured and easy to trigger.

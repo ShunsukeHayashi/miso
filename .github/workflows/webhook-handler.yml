@@ -1,4 +1,4 @@
-name: 🔔 Webhook Event Handler
+﻿name: 粕 Webhook Event Handler
 
 # Central event router for GitHub OS Event Bus
 # Addresses Issue #5 - Phase B: Event Bus Implementation
@@ -34,38 +34,38 @@ jobs:
 
       - name: Log Event
         run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "🔔 WEBHOOK EVENT RECEIVED"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏・
+          echo "粕 WEBHOOK EVENT RECEIVED"
+          echo "笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏・
           echo "Event: ${{ github.event_name }}"
           echo "Action: ${{ github.event.action }}"
           echo "Actor: ${{ github.actor }}"
           echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏・
 
       - name: Route to Agent - Issue Opened
         if: github.event_name == 'issues' && github.event.action == 'opened'
         run: |
-          echo "🤖 Routing to: IssueAgent"
+          echo "､・Routing to: IssueAgent"
           echo "Task: Analyze new Issue #${{ github.event.issue.number }}"
 
           # Check if Issue has agent-related labels
           LABELS="${{ toJson(github.event.issue.labels.*.name) }}"
 
-          if echo "$LABELS" | grep -q "🤖agent"; then
-            echo "✅ Agent label detected, will auto-process"
+          if echo "$LABELS" | grep -q "､紡gent"; then
+            echo "笨・Agent label detected, will auto-process"
             # TODO: Trigger IssueAgent workflow when implemented
           else
-            echo "ℹ️ Regular issue, manual triage required"
+            echo "邃ｹ・・Regular issue, manual triage required"
           fi
 
       - name: Route to Agent - Issue Labeled with Execute
         if: |
           github.event_name == 'issues' &&
           github.event.action == 'labeled' &&
-          github.event.label.name == '🤖agent-execute'
+          github.event.label.name == '､紡gent-execute'
         run: |
-          echo "🚀 AGENT EXECUTION TRIGGERED"
+          echo "噫 AGENT EXECUTION TRIGGERED"
           echo "Issue: #${{ github.event.issue.number }}"
           echo "Title: ${{ github.event.issue.title }}"
 
@@ -73,20 +73,20 @@ jobs:
           gh workflow run agent-runner.yml \
             -f issue_number=${{ github.event.issue.number }} \
             -f mode=autonomous \
-            || echo "⚠️ agent-runner.yml not found yet (will be created in Issue #4)"
+            || echo "笞・・agent-runner.yml not found yet (will be created in Issue #4)"
 
       - name: Route to Agent - PR Opened
         if: github.event_name == 'pull_request' && github.event.action == 'opened'
         run: |
-          echo "📝 Routing to: ReviewAgent"
+          echo "統 Routing to: ReviewAgent"
           echo "PR: #${{ github.event.pull_request.number }}"
           echo "Draft: ${{ github.event.pull_request.draft }}"
 
           if [ "${{ github.event.pull_request.draft }}" == "false" ]; then
-            echo "✅ Ready for review, triggering ReviewAgent"
+            echo "笨・Ready for review, triggering ReviewAgent"
             # TODO: Trigger ReviewAgent workflow
           else
-            echo "ℹ️ Draft PR, skipping auto-review"
+            echo "邃ｹ・・Draft PR, skipping auto-review"
           fi
 
       - name: Route to Agent - Comment Command
@@ -94,55 +94,81 @@ jobs:
         run: |
           COMMENT_BODY="${{ github.event.comment.body }}"
 
-          if echo "$COMMENT_BODY" | grep -q "^/agent"; then
-            echo "💬 Agent command detected in comment"
+          if echo "$COMMENT_BODY" | grep -Eq "^/(agent|task-start|task-plan|task-close)"; then
+            echo "💬 Command detected in comment"
             echo "Command: $COMMENT_BODY"
 
-            # Parse command
-            COMMAND=$(echo "$COMMENT_BODY" | sed 's/^\/agent //')
+            # Parse command /agent .. or custom one-liners
+            if echo "$COMMENT_BODY" | grep -q "^/agent"; then
+              COMMAND=$(echo "$COMMENT_BODY" | sed 's/^\/agent //')
 
-            case "$COMMAND" in
-              "analyze")
-                echo "🔍 Triggering IssueAgent for analysis"
-                ;;
-              "execute")
-                echo "🚀 Triggering CoordinatorAgent for execution"
-                ;;
-              "review")
-                echo "📝 Triggering ReviewAgent for code review"
-                ;;
-              "status")
-                echo "📊 Fetching current status"
-                ;;
-              *)
-                echo "❌ Unknown command: $COMMAND"
-                gh api \
-                  --method POST \
-                  -H "Accept: application/vnd.github+json" \
-                  /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
-                  -f body="❌ Unknown command: \`$COMMAND\`
+              case "$COMMAND" in
+                "analyze")
+                  echo "🔍 Triggering IssueAgent for analysis"
+                  ;;
+                "execute")
+                  echo "🚀 Triggering CoordinatorAgent for execution"
+                  ;;
+                "review")
+                  echo "📝 Triggering ReviewAgent for code review"
+                  ;;
+                "status")
+                  echo "📊 Fetching current status"
+                  ;;
+                *)
+                  echo "❌ Unknown command: $COMMAND"
+                  gh api \
+                    --method POST \
+                    -H "Accept: application/vnd.github+json" \
+                    /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+                    -f body="❌ Unknown command: \`$COMMAND\`
 
                 Available commands:
-                - \`/agent analyze\` - Analyze Issue
-                - \`/agent execute\` - Start autonomous execution
-                - \`/agent review\` - Request code review
-                - \`/agent status\` - Check current status"
-                ;;
-            esac
-          fi
+                - `/agent analyze` - Analyze Issue
+                - `/agent execute` - Start autonomous execution
+                - `/agent review` - Request code review
+                - `/agent status` - Check current status"
+                  ;;
+              esac
+            fi
 
+            # Simple issue workflow helpers
+            if echo "$COMMENT_BODY" | grep -q "^/task-start"; then
+              gh api \
+                --method POST \
+                -H "Accept: application/vnd.github+json" \
+                /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+                -f body="## 🚀 Task Start Template`n`nOwner: @${{ github.actor }}`nIssue/Context: #${{ github.event.issue.number }}`nGoal: <one-sentence objective>`nScope: <files / areas / constraints>`nCompletion Criteria: <what defines done>`nRisk: <none / low / medium / high>"
+            fi
+
+            if echo "$COMMENT_BODY" | grep -q "^/task-plan"; then
+              gh api \
+                --method POST \
+                -H "Accept: application/vnd.github+json" \
+                /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+                -f body="## 🧭 Task Plan Template`n`nExecution plan:`n- issue-analysis: infer labels and plan entry points`n- githubops-workflow: confirm issue declaration + branch naming`n- agent-execution: analyze/planning/execution/integration`n- (optional) agent-teams / ai-triad for parallelization`n- git-workflow: commit discipline`n- debugging-troubleshooting: verify failures when any"
+            fi
+
+            if echo "$COMMENT_BODY" | grep -q "^/task-close"; then
+              gh api \
+                --method POST \
+                -H "Accept: application/vnd.github+json" \
+                /repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments \
+                -f body="## ✅ Task Close Template`n`nImplemented: <summary>`nValidation: <tests/checks passed>`nChanges: <files changed>`nRisks / next steps: <follow-up items>`nNotify: pushcut / telegram-buttons"
+            fi
+          fi
       - name: Route to Agent - PR Merged
         if: |
           github.event_name == 'pull_request' &&
           github.event.action == 'closed' &&
           github.event.pull_request.merged == true
         run: |
-          echo "🎉 PR #${{ github.event.pull_request.number }} merged!"
-          echo "Branch: ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}"
+          echo "脂 PR #${{ github.event.pull_request.number }} merged!"
+          echo "Branch: ${{ github.event.pull_request.head.ref }} 竊・${{ github.event.pull_request.base.ref }}"
 
           # If merged to main, may trigger deployment
           if [ "${{ github.event.pull_request.base.ref }}" == "main" ]; then
-            echo "🚀 Merged to main, considering deployment..."
+            echo "噫 Merged to main, considering deployment..."
             # TODO: Trigger DeploymentAgent if applicable
           fi
 
@@ -151,20 +177,20 @@ jobs:
           github.event_name == 'workflow_run' &&
           github.event.workflow_run.conclusion == 'failure'
         run: |
-          echo "🚨 WORKFLOW FAILURE DETECTED"
+          echo "圷 WORKFLOW FAILURE DETECTED"
           echo "Workflow: ${{ github.event.workflow_run.name }}"
           echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
           echo "Run ID: ${{ github.event.workflow_run.id }}"
 
           # Escalate to Guardian for critical failures
           if echo "${{ github.event.workflow_run.name }}" | grep -qE "(agent-runner|economic-circuit-breaker)"; then
-            echo "🚨 Critical workflow failed, escalating to Guardian"
+            echo "圷 Critical workflow failed, escalating to Guardian"
 
             gh issue create \
-              --title "🚨 Critical Workflow Failure: ${{ github.event.workflow_run.name }}" \
-              --label "🔥Sev.1-Critical,🤖AI-システム" \
+              --title "圷 Critical Workflow Failure: ${{ github.event.workflow_run.name }}" \
+              --label "櫨Sev.1-Critical,､泡I-繧ｷ繧ｹ繝・Β" \
               --assignee "${{ github.repository_owner }}" \
-              --body "## 🚨 Critical Workflow Failure
+              --body "## 圷 Critical Workflow Failure
 
             **Workflow**: ${{ github.event.workflow_run.name }}
             **Conclusion**: ${{ github.event.workflow_run.conclusion }}
@@ -182,16 +208,17 @@ jobs:
             ---
             **Escalated by**: Webhook Handler
             **Timestamp**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-              || echo "⚠️ Failed to create escalation Issue"
+              || echo "笞・・Failed to create escalation Issue"
           fi
 
       - name: Event Summary
         if: always()
         run: |
           echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "📊 EVENT ROUTING SUMMARY"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✅ Event processed: ${{ github.event_name }}.${{ github.event.action }}"
-          echo "🎯 Routing completed at: $(date -u +%H:%M:%S)"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏・
+          echo "投 EVENT ROUTING SUMMARY"
+          echo "笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏・
+          echo "笨・Event processed: ${{ github.event_name }}.${{ github.event.action }}"
+          echo "識 Routing completed at: $(date -u +%H:%M:%S)"
+          echo "笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏≫煤笏・
+
