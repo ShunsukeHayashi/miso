@@ -1,0 +1,11 @@
+{
+  "commands": [
+    { "command": "start", "description": "Start a mission and show status" },
+    { "command": "plan", "description": "Post task plan template for current mission" },
+    { "command": "close", "description": "Post task close template for current mission" },
+    { "command": "status", "description": "Show current mission status" },
+    { "command": "task_start", "description": "Shortcut for /task-start workflow" },
+    { "command": "task_plan", "description": "Shortcut for /task-plan workflow" },
+    { "command": "task_close", "description": "Shortcut for /task-close workflow" }
+  ]
+}
