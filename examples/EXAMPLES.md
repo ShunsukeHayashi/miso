@@ -4,25 +4,25 @@
 📋 Phases: INIT → RUNNING → COMPLETE (no approval gate)
 ——————————————
 ⏳ INIT
-▓░░░░░░░░░░░░░░░░ 0%
+░░░░░░░░░░░░░░░░ 0%
 🧠 Initializing mission and collecting target changes
 ↳ 🎯 𝗠𝗶𝘀𝘀𝗶𝗼𝗻
 PR#42 add-user-authentication
 
 🔥 RUNNING
-▓████▓░░░░░░░░░░░░ 25%
+▓▓▓▓░░░░░░░░░░░░ 25%
 🧠 3 agents running in parallel
 
 🔥 linter ∣ ESLint/Prettier/TypeScript check
-▓████▓░░░░░░░░░░░░ 25%
+▓▓▓▓░░░░░░░░░░░░ 25%
 🧠 No violations detected, extracting improvement suggestions
 
 🔥 reviewer ∣ Readability & design review
-▓████████░░░░░░░░ 50%
+▓▓▓▓▓▓▓▓░░░░░░░░ 50%
 🧠 Evaluating design validity of changed code
 
 🔥 security-checker ∣ Vulnerability & secret audit
-▓██████░░░░░░░░░░░ 31%
+▓▓▓▓▓░░░░░░░░░░░ 31%
 🧠 Focused audit on dependencies, auth logic, env config
 
 ↳ ✅ 𝗥𝗲𝘃𝗶𝗲𝘄 𝗟𝗼𝗴
@@ -31,20 +31,20 @@ Type check: passed
 Test coverage: 87%
 
 ✅ DONE
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 All agents complete, completed tasks marked with strikethrough
 
 ✅ linter ∣ ESLint/Prettier/TypeScript check
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 ✓ 3 improvement suggestions listed (no critical issues)
 📄 linter-report.json
 
 ✅ reviewer ∣ Readability & design review
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 ✓ APPROVE, only minor simplification suggestions
 
 ✅ security-checker ∣ Vulnerability & secret audit
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 ⚠ 1 minor finding (recommend moving password_salt to env var)
 
 ↳ 📄 𝗗𝗘𝗟𝗜𝗩𝗘𝗥𝗔𝗕𝗟𝗘𝗦
@@ -59,23 +59,23 @@ Test coverage: 87%
 📋 Phases: INIT → RUNNING → AWAITING APPROVAL → COMPLETE
 ——————————————
 ⏳ INIT
-▓░░░░░░░░░░░░░░░░ 0%
+░░░░░░░░░░░░░░░░ 0%
 🧠 Starting article mission with pre-publish review gate
 
 🔥 RUNNING
-▓████▓░░░░░░░░░░░░ 25%
+▓▓▓▓░░░░░░░░░░░░ 25%
 🧠 Research and writing in parallel
 
 🔥 researcher ∣ Trend collection & information architecture
-▓████████░░░░░░░░ 50%
+▓▓▓▓▓▓▓▓░░░░░░░░ 50%
 🧠 Compiling 8 competitor articles and 3 case studies
 
 🔥 writer ∣ Writing & formatting
-▓██████░░░░░░░░░░░ 31%
+▓▓▓▓▓░░░░░░░░░░░ 31%
 🧠 Outline and intro complete, body at 40%
 
 ⏸️ AWAITING APPROVAL
-▓████████████████ 75%
+▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 75%
 🧠 Draft complete, pre-publish approval required
 
 ↳ 📄 𝗗𝗥𝗔𝗙𝗧
@@ -84,15 +84,15 @@ Test coverage: 87%
 [✅ Approve] [👁 Preview] [✏️ Revise] [❌ Abort]
 
 ✅ DONE
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 Approved and published successfully
 
 ✅ researcher ∣ Trend collection & information architecture
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 8 articles collected + 3 company insights incorporated
 
 ✅ writer ∣ Writing & publishing
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 Published (12 initial page views)
 
 ↳ 📄 𝗗𝗘𝗟𝗜𝗩𝗘𝗥𝗔𝗕𝗟𝗘𝗦
@@ -107,15 +107,15 @@ Test coverage: 87%
 📋 Phases: RUNNING → ERROR → RETRY → COMPLETE
 ——————————————
 🔥 RUNNING
-▓██████████░░░░░░ 50%
+▓▓▓▓▓▓▓▓░░░░░░░░ 50%
 🧠 Executing GitHub Issues sync API
 
 🔥 sync-agent ∣ API sync & rate limit monitoring
-▓██████████░░░░░░ 50%
+▓▓▓▓▓▓▓▓░░░░░░░░ 50%
 🧠 Processing GET /repos/{owner}/{repo}/issues state=open
 
 ❌ ERROR
-▓██████████░░░░░░ 50%
+▓▓▓▓▓▓▓▓░░░░░░░░ 50%
 🧠 ETIMEDOUT detected, evaluating retry
 
 🧠 Error detail: api.github.com:443 30,000ms
@@ -123,7 +123,7 @@ Test coverage: 87%
 🧠 Strategy: exponential backoff + timeout extension
 
 🔄 RETRY
-▓██████████░░░░░░ 50%
+▓▓▓▓▓▓▓▓░░░░░░░░ 50%
 🧠 Re-executing, checking rate limits
 
 [🔄 Retry] [⏭ Skip] [📄 Complete with partial results] [❌ Abort]
@@ -132,11 +132,11 @@ Test coverage: 87%
 🧠 Rate limit: 4800/5000 (96% used)
 
 ✅ DONE
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 Succeeded after backoff, fetch and aggregation complete
 
 ✅ sync-agent ∣ API sync & rate limit monitoring
-▓████████████████ 100%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%
 🧠 ✓ 200 OK, 12 issues fetched
 
 📄 issues-sync.json — Sync results
@@ -152,7 +152,7 @@ Test coverage: 87%
 ✅ Ship "AI Assistant Integration" (2026-02-01 → 2026-03-31)
 
 ↳ 📊 𝗢𝗩𝗘𝗥𝗔𝗟𝗟 𝗣𝗥𝗢𝗚𝗥𝗘𝗦𝗦
-▓██████████████░░░ 87%
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 87%
 🧠 Progress update: 2 complete / 1 in progress / 2 not started
 
 ✅ ~1.0 Requirements Definition (2026-02-01 → 2026-02-07)~
